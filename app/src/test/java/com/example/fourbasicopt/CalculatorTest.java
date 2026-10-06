@@ -7,6 +7,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class CalculatorTest {
 
     private Calculator calculator;
@@ -39,6 +44,9 @@ public class CalculatorTest {
                     break;
                 case '<':
                     calculator.backspace();
+                    break;
+                case 'C':
+                    calculator.clear();
                     break;
                 default:
                     calculator.inputDigit(key - '0');
@@ -108,5 +116,146 @@ public class CalculatorTest {
     public void repeatingDecimalIsRounded() {
         type("1/3=");
         assertEquals("0.333333333333333", calculator.getDisplay());
+        type("*3=");
+        assertEquals("0.999999999999999", calculator.getDisplay());
+    }
+
+    @Test
+    public void initialState() {
+        assertEquals("0", calculator.getDisplay());
+        assertEquals("", calculator.getExpression());
+        assertFalse(calculator.isError());
+    }
+
+    @Test
+    public void equalsWithoutOperatorDoesNothing() {
+        type("=");
+        assertEquals("0", calculator.getDisplay());
+        type("12=");
+        assertEquals("12", calculator.getDisplay());
+        assertEquals("", calculator.getExpression());
+    }
+
+    @Test
+    public void equalsRightAfterOperatorReusesLeftOperand() {
+        type("5+=");
+        assertEquals("10", calculator.getDisplay());
+        assertEquals("5 + 5 =", calculator.getExpression());
+    }
+
+    @Test
+    public void expressionFollowsInput() {
+        type("12+");
+        assertEquals("12 +", calculator.getExpression());
+        assertEquals("12", calculator.getDisplay());
+        type("*");
+        assertEquals("12 ×", calculator.getExpression());
+        type("3");
+        assertEquals("12 ×", calculator.getExpression());
+        assertEquals("3", calculator.getDisplay());
+        type("=");
+        assertEquals("12 × 3 =", calculator.getExpression());
+        type("5");
+        assertEquals("", calculator.getExpression());
+        assertEquals("5", calculator.getDisplay());
+    }
+
+    @Test
+    public void dotStartsNewOperandWithZero() {
+        type("3+.5=");
+        assertEquals("3.5", calculator.getDisplay());
+        assertEquals("3 + 0.5 =", calculator.getExpression());
+    }
+
+    @Test
+    public void trailingDotAndZerosAreDropped() {
+        type("5.+2=");
+        assertEquals("7", calculator.getDisplay());
+        assertEquals("5 + 2 =", calculator.getExpression());
+        type("2.50+0=");
+        assertEquals("2.5", calculator.getDisplay());
+        type("0.5-0.5=");
+        assertEquals("0", calculator.getDisplay());
+    }
+
+    @Test
+    public void negativeResultCanBeUsedAsNextOperand() {
+        type("3-5=");
+        assertEquals("-2", calculator.getDisplay());
+        type("*2=");
+        assertEquals("-4", calculator.getDisplay());
+        assertEquals("-2 × 2 =", calculator.getExpression());
+    }
+
+    @Test
+    public void inputLengthIsLimited() {
+        type("12345678901234567890");
+        assertEquals("123456789012345", calculator.getDisplay());
+    }
+
+    @Test
+    public void largeResultUsesScientificNotation() {
+        type("999999999999999*999999999999999=");
+        assertEquals("9.99999999999998E+29", calculator.getDisplay());
+    }
+
+    @Test
+    public void backspaceDoesNotEditResult() {
+        type("1+2=<");
+        assertEquals("3", calculator.getDisplay());
+        type("12+<");
+        assertEquals("12", calculator.getDisplay());
+        assertEquals("12 +", calculator.getExpression());
+    }
+
+    @Test
+    public void clearResetsEverything() {
+        type("12+3C");
+        assertEquals("0", calculator.getDisplay());
+        assertEquals("", calculator.getExpression());
+        type("4=");
+        assertEquals("4", calculator.getDisplay());
+    }
+
+    @Test
+    public void divideByZeroInChainIsError() {
+        type("5/0+");
+        assertTrue(calculator.isError());
+        assertEquals("", calculator.getExpression());
+    }
+
+    @Test
+    public void errorIgnoresOperatorsUntilCleared() {
+        type("5/0=+=");
+        assertTrue(calculator.isError());
+        type("<");
+        assertFalse(calculator.isError());
+        assertEquals("0", calculator.getDisplay());
+
+        type("5/0=C");
+        assertFalse(calculator.isError());
+
+        type("5/0=.5");
+        assertFalse(calculator.isError());
+        assertEquals("0.5", calculator.getDisplay());
+    }
+
+    @Test
+    public void stateSurvivesSerialization() throws Exception {
+        type("12+3");
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeObject(calculator);
+        }
+        try (ObjectInputStream in = new ObjectInputStream(
+                new ByteArrayInputStream(bytes.toByteArray()))) {
+            calculator = (Calculator) in.readObject();
+        }
+
+        assertEquals("3", calculator.getDisplay());
+        assertEquals("12 +", calculator.getExpression());
+        type("=");
+        assertEquals("15", calculator.getDisplay());
     }
 }
