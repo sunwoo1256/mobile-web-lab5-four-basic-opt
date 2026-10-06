@@ -2,6 +2,8 @@
 
 사칙연산(덧셈, 뺄셈, 곱셈, 나눗셈)을 지원하는 Android 계산기 앱입니다.
 
+<img width="302" height="696" alt="Image" src="https://github.com/user-attachments/assets/9ba41616-8373-4be1-a460-0fda399826f9" />
+
 ## 기능
 
 - 숫자 0~9와 소수점 입력
