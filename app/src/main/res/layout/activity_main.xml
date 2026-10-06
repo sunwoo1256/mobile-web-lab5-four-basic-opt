@@ -1,19 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    tools:ignore="HardcodedText">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvExpression"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="20sp"
+            tools:text="12 + 3 =" />
+
+        <TextView
+            android:id="@+id/tvResult"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:gravity="end|center_vertical"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurface"
+            app:autoSizeMaxTextSize="56sp"
+            app:autoSizeMinTextSize="18sp"
+            app:autoSizeTextType="uniform"
+            tools:text="15" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <LinearLayout style="@style/CalcRow">
+
+            <Button
+                android:id="@+id/btnClear"
+                style="@style/CalcButton.Function"
+                android:text="@string/btn_clear" />
+
+            <Button
+                android:id="@+id/btnBackspace"
+                style="@style/CalcButton.Function"
+                android:contentDescription="@string/desc_backspace"
+                android:text="@string/btn_backspace" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/CalcRow">
+
+            <Button
+                android:id="@+id/btn7"
+                style="@style/CalcButton"
+                android:text="7" />
+
+            <Button
+                android:id="@+id/btn8"
+                style="@style/CalcButton"
+                android:text="8" />
+
+            <Button
+                android:id="@+id/btn9"
+                style="@style/CalcButton"
+                android:text="9" />
+
+            <Button
+                android:id="@+id/btnDivide"
+                style="@style/CalcButton.Operator"
+                android:contentDescription="@string/desc_divide"
+                android:text="@string/btn_divide" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/CalcRow">
+
+            <Button
+                android:id="@+id/btn4"
+                style="@style/CalcButton"
+                android:text="4" />
+
+            <Button
+                android:id="@+id/btn5"
+                style="@style/CalcButton"
+                android:text="5" />
+
+            <Button
+                android:id="@+id/btn6"
+                style="@style/CalcButton"
+                android:text="6" />
+
+            <Button
+                android:id="@+id/btnMultiply"
+                style="@style/CalcButton.Operator"
+                android:contentDescription="@string/desc_multiply"
+                android:text="@string/btn_multiply" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/CalcRow">
+
+            <Button
+                android:id="@+id/btn1"
+                style="@style/CalcButton"
+                android:text="1" />
+
+            <Button
+                android:id="@+id/btn2"
+                style="@style/CalcButton"
+                android:text="2" />
+
+            <Button
+                android:id="@+id/btn3"
+                style="@style/CalcButton"
+                android:text="3" />
+
+            <Button
+                android:id="@+id/btnSubtract"
+                style="@style/CalcButton.Operator"
+                android:contentDescription="@string/desc_subtract"
+                android:text="@string/btn_subtract" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/CalcRow">
+
+            <Button
+                android:id="@+id/btn0"
+                style="@style/CalcButton"
+                android:text="0" />
+
+            <Button
+                android:id="@+id/btnDot"
+                style="@style/CalcButton"
+                android:text="@string/btn_dot" />
+
+            <Button
+                android:id="@+id/btnEquals"
+                style="@style/CalcButton.Operator"
+                android:text="@string/btn_equals" />
+
+            <Button
+                android:id="@+id/btnAdd"
+                style="@style/CalcButton.Operator"
+                android:contentDescription="@string/desc_add"
+                android:text="@string/btn_add" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
